@@ -10,6 +10,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static org.firstinspires.ftc.teamcode.Mechanisms.AutoConstantsBlue.*;
 
@@ -21,6 +22,10 @@ public class AutoBlueGoal extends  OpMode{
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+
+    private Shooter shooter;
+
+
 
 
     public void buildPaths() {
@@ -88,8 +93,8 @@ public class AutoBlueGoal extends  OpMode{
                 .build();
 
         leaveGoal = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,leavePoseGoal))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),leavePoseGoal.getHeading())
+                .addPath(new BezierLine(startPose,leavePoseGoal))
+                .setLinearHeadingInterpolation(startPose.getHeading(),leavePoseGoal.getHeading())
                 .build();
 
         // AUDIENCE SIDE PATHS
@@ -152,12 +157,20 @@ public class AutoBlueGoal extends  OpMode{
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0: {  // FOLLOW PATH TO SCORING - preloaded
-                follower.followPath(scorePreload);
-                setPathState(1);
+                if (shooter.launch(true)) {
+                    //follower.followPath(scorePreload);
+                    setPathState(1);
+                }
                 //shooter.spin(2000);
                 break;
             }
-            case 1: { // DONE PATH
+            case 1: {  // FOLLOW PATH TO SCORING - preloaded
+                follower.followPath(leaveGoal);
+                setPathState(2);
+                //shooter.spin(2000);
+                break;
+            }
+            case 2: { // DONE PATH
 
             /* You could check for
             - Follower State: "if(!follower.isBusy()) {}"
@@ -168,11 +181,12 @@ public class AutoBlueGoal extends  OpMode{
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     /* Score Preload */
-                    setPathState(2);
+                    // turn off mechanisms
+                    setPathState(-1);
                 }
                 break;
             }
-            case 2: { // JUST SCORING - preloaded
+            case 3: { // JUST SCORING - preloaded
                 if (true //shooter.score(false, 3,telemetry)
                 ) {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
@@ -182,7 +196,7 @@ public class AutoBlueGoal extends  OpMode{
                 }
                 break;
             }
-            case 3: { // FOLLOW GRAB PATH - pickup 1
+            case 4: { // FOLLOW GRAB PATH - pickup 1
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if (!follower.isBusy()) {
                     /* Grab Sample */
@@ -192,13 +206,13 @@ public class AutoBlueGoal extends  OpMode{
                 }
                 break;
             }
-            case 4: { // FOLLOW PATH TO SCORING - pickup 3
+            case 5: { // FOLLOW PATH TO SCORING - pickup 3
                 if (!follower.isBusy()) {
                     setPathState(5);
                 }
                 break;
             }
-            case 5: { // JUST SCORING - pickup 3
+            case 6: { // JUST SCORING - pickup 3
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (true //shooter.score(false, 3, telemetry)
                 ) {
@@ -210,7 +224,7 @@ public class AutoBlueGoal extends  OpMode{
                 }
                 break;
             }
-            case 6: {
+            case 7: {
                 if (!follower.isBusy()) {
                     follower.followPath(grabPickup2,0.6,true);
                     setPathState(61);
@@ -219,7 +233,7 @@ public class AutoBlueGoal extends  OpMode{
             }
 
 
-            case 61: { // FOLLOW GRAB PATH - pickup 2
+            case 8: { // FOLLOW GRAB PATH - pickup 2
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if (!follower.isBusy()) {
                     /* Grab Sample */
@@ -230,13 +244,13 @@ public class AutoBlueGoal extends  OpMode{
                 }
                 break;
             }
-            case 7: { // FOLLOW PATH TO SCORING - pickup 2
+            case 9: { // FOLLOW PATH TO SCORING - pickup 2
                 if (!follower.isBusy()) {
                     setPathState(8);
                 }
                 break;
             }
-            case 8: { // JUST SCORING - pickup 2
+            case 10: { // JUST SCORING - pickup 2
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (true //shooter.score(false, 3, telemetry)
                 ) {
@@ -249,13 +263,13 @@ public class AutoBlueGoal extends  OpMode{
                 }
                 break;
             }
-            case 9: { // FOLLOW PATH LEAVEAUDIENCE
+            case 11: { // FOLLOW PATH LEAVEAUDIENCE
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
                 break;
             }
-            case 66:
+            case 12:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
@@ -265,7 +279,7 @@ public class AutoBlueGoal extends  OpMode{
                     setPathState(7);
                 }
                 break;
-            case 77:
+            case 13:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
@@ -309,6 +323,10 @@ public class AutoBlueGoal extends  OpMode{
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+
+        shooter = new Shooter(hardwareMap);
+
+
 
 
         //shooter = new Shooter(hardwareMap);

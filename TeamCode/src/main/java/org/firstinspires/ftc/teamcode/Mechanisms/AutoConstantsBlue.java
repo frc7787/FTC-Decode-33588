@@ -9,8 +9,8 @@ import com.pedropathing.paths.PathChain;
 public class AutoConstantsBlue {
     // INITIALIZING POSES
 
-    public static Pose startPose = new Pose(28, 125, Math.toRadians(180)); // Start Pose of our robot.
-    public static Pose leavePoseGoal = new Pose(55, 100, Math.toRadians(147)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    public static Pose startPose = new Pose(20, 125, Math.toRadians(135)); // Start Pose of our robot.
+    public static Pose leavePoseGoal = new Pose(35, 125, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
 
     public static Pose startPoseAudience = new Pose(58, 9, Math.toRadians(90)); // Start Pose of our robot.x was 56
     //public static Pose leavePoseAudience = new Pose(50,26, Math.toRadians(114)); //
