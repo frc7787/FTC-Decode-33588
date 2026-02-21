@@ -6,15 +6,15 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 @Configurable
-public class AutoConstantsBlue {
+public class AutoConstantsRed {
     // INITIALIZING POSES
 
-    public static Pose startPose = new Pose(20, 125, Math.toRadians(135)); // Start Pose of our robot.
-    public static Pose leavePoseGoal = new Pose(40, 125, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    public static Pose startPose = new Pose(124, 125, Math.toRadians(45)); // Start Pose of our robot.
+    public static Pose leavePoseGoal = new Pose(104, 125, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
 
     public static Pose startPoseAudience = new Pose(58, 9, Math.toRadians(90)); // Start Pose of our robot.x was 56
     //public static Pose leavePoseAudience = new Pose(50,26, Math.toRadians(114)); //
-    public static Pose leavePoseAudience = new Pose(58,0, Math.toRadians(90));
+    public static Pose leavePoseAudience = new Pose(36,10, Math.toRadians(180));
 
     public static Pose pickup1StartPose = new Pose(48, 83, Math.toRadians(180));
     public static Pose pickup1EndPose = new Pose(18,83, Math.toRadians(180));
@@ -52,3 +52,4 @@ public class AutoConstantsBlue {
     public static PathChain grabPickup3Audience, scorePickup3Audience, grabPickup2PreAudience, grabPickup2Audience, scorePickup2Audience;
     public static PathChain leaveGoal, leaveAudience;
 }
+

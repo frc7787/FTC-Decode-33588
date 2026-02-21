@@ -26,9 +26,10 @@ public class Shooter {
     PIDFCoefficients pidfCoefficients = new PIDFCoefficients(PIDF_P,0,0,PIDF_F);
 
     public static double FEED_TIME_SECONDS = 5.0; //The feeder servos run this long when a shot is requested.
+    public static double AUTO_SHOT_DELAY = 2.0;
     final double STOP_SPEED = 0.0; //We send this power to the servos when we want them to stop.
     final double FULL_SPEED = 1.0;
-    public static double AUTO_FEEDER_SPEED = 0.3;
+    public static double AUTO_FEEDER_SPEED = 0.2;
 
     /*
      * When we control our launcher motor, we are using encoders. These allow the control system
@@ -115,18 +116,22 @@ public class Shooter {
                 if (shotRequested) {
                     launchState = LaunchState.SPIN_UP;
                 }
+
                 break;
             case SPIN_UP:
+                feederTimer.reset();
                 launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
                 if (launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
                     launchState = LaunchState.LAUNCH;
                 }
                 break;
             case LAUNCH:
-                leftFeeder.setPower(AUTO_FEEDER_SPEED);
-                rightFeeder.setPower(AUTO_FEEDER_SPEED);
-                feederTimer.reset();
-                launchState = LaunchState.LAUNCHING;
+                if (feederTimer.seconds() > AUTO_SHOT_DELAY) {
+                    leftFeeder.setPower(AUTO_FEEDER_SPEED);
+                    rightFeeder.setPower(AUTO_FEEDER_SPEED);
+                    feederTimer.reset();
+                    launchState = LaunchState.LAUNCHING;
+                }
                 break;
             case LAUNCHING:
                 if (feederTimer.seconds() > FEED_TIME_SECONDS) {

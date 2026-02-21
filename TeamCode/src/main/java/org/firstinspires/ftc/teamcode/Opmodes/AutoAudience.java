@@ -16,8 +16,8 @@ import static org.firstinspires.ftc.teamcode.Mechanisms.AutoConstantsBlue.*;
 
 
 
-@Autonomous(name = "AutoBlueGoal", group = "opmodes")
-public class AutoBlueGoal extends  OpMode{
+@Autonomous(name = "AutoAudience", group = "opmodes")
+public class AutoAudience extends  OpMode{
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -25,6 +25,7 @@ public class AutoBlueGoal extends  OpMode{
 
     private Shooter shooter;
 
+    private double delayStart=0;
 
 
 
@@ -145,8 +146,8 @@ public class AutoBlueGoal extends  OpMode{
                 .build();
 
         leaveAudience = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseAudience,leavePoseAudience))
-                .setLinearHeadingInterpolation(scorePoseAudience.getHeading(),leavePoseAudience.getHeading())
+                .addPath(new BezierLine(startPoseAudience,leavePoseAudience))
+                .setLinearHeadingInterpolation(startPoseAudience.getHeading(),leavePoseAudience.getHeading())
                 .build();
 
 
@@ -157,18 +158,18 @@ public class AutoBlueGoal extends  OpMode{
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0: {  // FOLLOW PATH TO SCORING - preloaded
-                if (opmodeTimer.getElapsedTimeSeconds() > 2) {
-                    if (shooter.launch(true)) { //follower.followPath(scorePreload);
-                        setPathState(1);
-                    }
+                if (opmodeTimer.getElapsedTimeSeconds() > delayStart) {
+                    follower.followPath(leaveAudience);
+                    setPathState(1);
                 }
-                //shooter.spin(2000);
                 break;
             }
             case 1: {  // FOLLOW PATH TO SCORING - preloaded
-                follower.followPath(leaveGoal);
-                setPathState(2);
-                //shooter.spin(2000);
+                if (!follower.isBusy()) {
+                    /* Score Preload */
+                    // turn off mechanisms
+                    setPathState(-1);
+                }
                 break;
             }
             case 2: { // DONE PATH
@@ -320,11 +321,15 @@ public class AutoBlueGoal extends  OpMode{
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
 
         shooter = new Shooter(hardwareMap);
+
+
+
 
         //shooter = new Shooter(hardwareMap);
 
@@ -334,7 +339,23 @@ public class AutoBlueGoal extends  OpMode{
 
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
-    public void init_loop() {}
+    public void init_loop() {
+        telemetry.addData("DELAYED START: Before firing preloaded", delayStart);
+        telemetry.addData("Press Y to increase","by 1");
+        telemetry.addData("Press A to decrease", "by 1");
+
+        telemetry.update();
+
+        if (gamepad1.yWasPressed()) {
+            delayStart = delayStart + 1;
+        } else if (gamepad1.aWasPressed()) {
+            delayStart = delayStart - 1;
+            if (delayStart < 0) {
+                delayStart = 0;
+            }
+        }
+
+    }
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/
@@ -352,3 +373,4 @@ public class AutoBlueGoal extends  OpMode{
 
 
 } // end of AutoByExampleDec
+

@@ -12,12 +12,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import static org.firstinspires.ftc.teamcode.Mechanisms.AutoConstantsBlue.*;
+import static org.firstinspires.ftc.teamcode.Mechanisms.AutoConstantsRed.*;
 
 
 
-@Autonomous(name = "AutoBlueGoal", group = "opmodes")
-public class AutoBlueGoal extends  OpMode{
+@Autonomous(name = "AutoRedGoal", group = "opmodes")
+public class AutoRedGoal extends  OpMode{
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -157,10 +157,9 @@ public class AutoBlueGoal extends  OpMode{
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0: {  // FOLLOW PATH TO SCORING - preloaded
-                if (opmodeTimer.getElapsedTimeSeconds() > 2) {
-                    if (shooter.launch(true)) { //follower.followPath(scorePreload);
-                        setPathState(1);
-                    }
+                if (shooter.launch(true)) {
+                    //follower.followPath(scorePreload);
+                    setPathState(1);
                 }
                 //shooter.spin(2000);
                 break;
@@ -320,11 +319,15 @@ public class AutoBlueGoal extends  OpMode{
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
 
         shooter = new Shooter(hardwareMap);
+
+
+
 
         //shooter = new Shooter(hardwareMap);
 
@@ -352,3 +355,4 @@ public class AutoBlueGoal extends  OpMode{
 
 
 } // end of AutoByExampleDec
+
